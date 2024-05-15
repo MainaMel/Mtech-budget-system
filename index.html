@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@latest"></script>
 </head>
 <body>
-    <div class="split left">
+    <div id="app">
+       
+ <div class="split left">
         <div class="centered">
             <img src="./photos/mijini_tech_logo.jpg" alt="Mijini Tech Logo" id="logo">
   
@@ -17,7 +20,7 @@
 
     <div id="loginContainer">
 
-        <form  method="post" action="connect.php" id="loginForm">
+        <form  method="post"  id="loginForm">
             <h1> Login</h1>
             <label for="email">Email</label>
             <input type="text" id="email" name="email" placeholder="" required>
@@ -30,6 +33,7 @@
 
         <div id="signupLink">
             <p>Don't have an account? <a href="#" onclick="toggleForm()">Sign up here</a></p>
+            {{title}}
         </div>
         
 
@@ -49,9 +53,11 @@
         </div>
     </div>
 
-
+    </div>
+    
+    <script src="/app.js"></script>
 <script>
-    function login() {
+    async function login() {
         var email = document.getElementById('email').value;
         var password = document.getElementById('password').value;
 
@@ -59,11 +65,40 @@
             alert('Please enter both email and password');
             return;
         }
+        else{
+            // hit endpoint
+            const res = await fetch('http://localhost:8080/api/v1/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email, password})
+            })
+            const data = await res.json()
+            console.log(data)
 
-        alert('Login successful! Redirecting...');
-        // Redirect the user to another page
-        window.location.href = 'dashboard.html';  // Replace 'dashboard.html' with the actual URL of the dashboard or home page
-    }
+            if (data.statusCode == 200) {
+                alert(data.message);
+                // Redirect the user to another page
+                window.location.href = 'dashboard.html';  // Replace 'dashboard.html' with the actual URL of the dashboard or home page
+            } else {
+                alert(data.message)
+            }
+           
+            // .then(res => {
+            //     const data =res.json()
+            //     console.log(data)
+            //     alert('Login successful! Redirecting...');
+                // Redirect the user to another page
+                // window.location.href = 'dashboard.html';  // Replace 'dashboard.html' with the actual URL of the dashboard or home page
+            // })
+           
+            
+//             .catch(error => console.error('Error:', error));
+           }
+        }
+    
+    
 
     function signup() {
         var email = document.getElementById('email').value; // Assuming you use the same email field for signup
@@ -74,10 +109,27 @@
             return;
         }
 
-        alert('Signup successful! Redirecting...');
-        // Redirect the user to another page
-        window.location.href = 'dashboard.html';  // Replace 'dashboard.html' with the actual URL of the dashboard or home page
-    }
+        fetch('http://localhost:8080/api/v1/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email
+                , password})
+            })
+            .then(res => {
+                res.json()
+                console.log(res)
+            }).catch(error => console.error('Error:', error));
+
+        }
+        
+    
+
+        // alert('Signup successful! Redirecting...');
+        // // Redirect the user to another page
+        // window.location.href = 'dashboard.html';  // Replace 'dashboard.html' with the actual URL of the dashboard or home page
+
 
     function toggleForm() {
         var loginForm = document.getElementById('loginForm');

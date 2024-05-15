@@ -1,9 +1,12 @@
 var express = require("express");
 var cors = require('cors');
 var app = express();
+const path = require('path')
+// var bcrypt = require("bcrypt");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended:false}))
 
 const port = process.env.PORT || 8080;
 
@@ -14,7 +17,7 @@ const processhistoryRoutes =require('./src/routes/processhistory');
 const currenciesRoutes = require('./src/routes/currencies');
 const budgetsRoutes = require('./src/routes/budgets');
 const requestRoutes = require('./src/routes/requests');
-const loginRoutes = require('./src/routes/login'); // Fix the typo here
+const loginRoutes = require('./src/routes/login'); 
 
 
 
@@ -28,6 +31,14 @@ app.use("/api/v1/currencies", currenciesRoutes);
 app.use("/api/v1/budgets", budgetsRoutes);
 app.use("/api/v1/requests", requestRoutes);
 app.use("/api/v1/login", loginRoutes);
+
+
+app.use(express.static(path.join(__dirname, 'client')))
+
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/index.html'))
+})
+
 
 
 console.clear();
